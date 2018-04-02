@@ -1,8 +1,8 @@
 #ifndef _H_TWI
 #define _H_TWI
 
-#include <avr/io.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 namespace TWI {
   void Init();

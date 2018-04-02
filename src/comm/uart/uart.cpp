@@ -18,18 +18,18 @@ void UART::Init() {
 #define BAUD 19200
 #include <util/setbaud.h>
   /* Set baud rate */
-  UBRRH = UBRRH_VALUE;
-  UBRRL = UBRRL_VALUE;
+  UBRR0H = UBRRH_VALUE;
+  UBRR0L = UBRRL_VALUE;
 
   /* Enable receiver and transmitter */
-  UCSRB = (1 << RXEN) | (1 << TXEN);
+  UCSR0B = (1 << RXEN0) | (1 << TXEN0);
 
   /* Set frame format: 8data, 2stop bit */
-  UCSRC = (1 << USBS) | (3 << UCSZ0);  
+  UCSR0C = (1 << USBS0) | (3 << UCSZ00);  
 }
 
 bool UART::IsAvailable() {
-  if((UCSRA & _BV(UDRE)) == 0)
+  if((UCSR0A & _BV(UDRE0)) == 0)
     return false;
   return true;
 }
@@ -45,21 +45,21 @@ void UART::Print(const char* data) {
   for(int i = 0; i < UART::Strlen(data); i++) {
     while(!UART::IsAvailable())
       ;
-    UDR = data[i];
+    UDR0 = data[i];
   }
 }
 
 void UART::PutChar(unsigned char data) {
   while(!UART::IsAvailable())
     ;
-  UDR = (int)data;
+  UDR0 = (int)data;
 }
 
 uint8_t UART::GetChar() {
   //loop_until_bit_is_set(UCSR0A, RXC0);
-  while(!(UCSRA & (1 << RXC)))
+  while(!(UCSR0A & (1 << RXC0)))
     ;
-  return UDR;
+  return UDR0;
 }
 
 char* UART::ReadString() {

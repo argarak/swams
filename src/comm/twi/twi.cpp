@@ -17,7 +17,12 @@
    TWDR is the TWI Data Register (sends data to device),
    TWAR is the TWI Address Register (selects device address). */
 
-#include <twi.h>
+
+#include <avr/io.h>
+#include <util/twi.h> 
+
+#include "twi.h"
+
 #define TWI_NOT_COMPLETE ((TWCR & (1 << TWINT)) == 0)
 
 void TWI::Init() {
