@@ -11,6 +11,8 @@
 /* This page was also helpful in documenting the AVR registers for TWI:
    http://www.avrbeginners.net/architecture/twi/twi.html */
 
+/* I've also referenced Arduino's Wire library for my TWI interface. */
+
 /* TWCR is the TWI Control Register (sets TWI parameters),
    TWSR is the TWI Status Register (sets mode of operation, e.g. Master),
    TWBR is the TWI Bitrate Register (corresponds to frequency, e.g. 400kHz),
@@ -19,13 +21,19 @@
 
 
 #include <avr/io.h>
-#include <util/twi.h> 
+#include <util/twi.h>
 
 #include "twi.h"
 
-#define TWI_NOT_COMPLETE ((TWCR & (1 << TWINT)) == 0)
+volatile uint8_t TWI::writeAddress = 0x00;
 
 void TWI::Init() {
+
+  /* Apparently this activates internal pull-ups?
+     Though I have external ones so this may not do much... */
+  io_set_high(DDR(SCL_PIN), PIN(SCL_PIN));
+  io_set_high(DDR(SDA_PIN), PIN(SDA_PIN));
+
   /* Setting TWI registers to clock frequency of 400kHz. According to the
      datasheet of the MCP7940M RTC I'm using, it should be OK.
 
@@ -44,6 +52,13 @@ void TWI::Init() {
   TWCR = (1 << TWEN);
 }
 
+void TWI::SetAddress(uint8_t address) {
+  /* Assign address to TWAR register, shifting the address value skipping over
+     the TWGCE bit. */
+  TWAR = address << 1;
+}
+
+// Working
 void TWI::Start() {
   /* Set the following registers:
      TWINT: Interrupt flag, has to be cleared after a TWI operation (set to 1);
@@ -66,7 +81,7 @@ void TWI::Stop() {
 
 void TWI::Write(uint8_t data) {
   /* Provide data to TWDR. */
-  TWDR = data;
+  TWDR = (data) | (writeAddress << 1);
 
   /* Enable TWI and clear interrupt so that data can be sent. */
   TWCR = (1 << TWINT) | (1 << TWEN);
@@ -95,5 +110,5 @@ uint8_t TWI::Status() {
      Possible return values are documented in
      https://www.nongnu.org/avr-libc/user-manual/group__util__twi.html
      though I cannot confirm this. */
-	return TWSR;
+	return (TWSR & 0xF8);
 }
