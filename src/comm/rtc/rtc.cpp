@@ -2,10 +2,9 @@
 #include "rtc.h"
 
 void RTC::Start() {
-  TWI::SetAddress(RTC_ADDRESS);
-
   TWI::Start();
 
+  TWI::Write((RTC_ADDRESS << 1)); // In SLA_W (write) mode
   TWI::Write(0x00);
   TWI::Write(0x80); 
 
@@ -15,15 +14,22 @@ void RTC::Start() {
 }
 
 uint8_t RTC::ReadRegister(uint8_t address) {
-  TWI::SetAddress(RTC_ADDRESS);
-
   TWI::Start();
+  TWI::Write((RTC_ADDRESS << 1)); // In SLA_W (write) mode
   TWI::Write(address);
-
-  uint8_t value = TWI::Read();
   TWI::Stop();
 
-  return value;
+  uint8_t buf[7];
+
+  TWI::Start();
+  TWI::Write((RTC_ADDRESS << 1) + 0x01); // IN SLA_R (read) mode
+
+  for(int i = 0; i < 7; ++i)
+    buf[i] = TWI::Read();
+
+  TWI::Stop();
+
+  return buf[0];
 }
 
 void RTC::Init() {

@@ -8,7 +8,7 @@
 #include "../twi/twi.h"
 #include "../uart/uart.h"
 
-#define RTC_ADDRESS 0x6F
+#define RTC_ADDRESS       0x6F
 
 namespace RTC {
   void Start();
