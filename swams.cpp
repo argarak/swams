@@ -16,13 +16,22 @@ int main(void) {
   while (1) {
     PORTB |= _BV(PB0);
 
-    uint8_t seconds;
-    seconds = RTC::ReadRegister(0x00);
+    uint8_t timeBuf[7];
+    RTC::ReadRegister(0x00, timeBuf);
 
-    char secbuf[16];
-    sprintf(secbuf, "%x\n", seconds);
+    for(int i = 0; i < 7; ++i)
+      timeBuf[i] = RTC::ConvertFromBCD(timeBuf[i]);
 
-    UART::Print("Current seconds: ");
+    char secbuf[64];
+    sprintf(secbuf, "Time: %i:%i:%02i | Date: %i %i/%i/%i\n",
+            timeBuf[2],
+            timeBuf[1],
+            timeBuf[0] - 80,
+            timeBuf[3],
+            timeBuf[4],
+            timeBuf[5],
+            timeBuf[6]);
+
     UART::Print(secbuf);
 
     _delay_ms(500);

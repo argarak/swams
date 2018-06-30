@@ -11,8 +11,13 @@
 #define RTC_ADDRESS       0x6F
 
 namespace RTC {
+  char* ConvertWeekDay(uint8_t day);
+
+  uint8_t ConvertFromBCD(uint8_t val);
+  uint8_t ConvertToBCD(uint8_t val);
+
   void Start();
-  uint8_t ReadRegister(uint8_t address);
+  void ReadRegister(uint8_t address, uint8_t* buf);
   void Init();
 }
 
