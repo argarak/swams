@@ -79,18 +79,31 @@ void RTC::WriteTime(uint8_t seconds, uint8_t minutes, uint8_t hours,
   TWI::Write(RTC::ConvertToBCD(year)); // year
 
   TWI::Stop();
-
-  TWI::Start();
-
-  TWI::Write(0xDE);
-  TWI::Write(0x00);
-
-  TWI::Write(0x23);
-
-  TWI::Stop();
 }
 
-void RTC::SetCompileTime() {}
+void RTC::SetCompileTime() {
+  char monthBuf[10];
+  int month, day, year, dayWeek;
+
+  static const char month_names[] = "JanFebMarAprMayJunJulAugSepOctNovDec";
+
+  sscanf(__DATE__, "%s %d 20%d", monthBuf, &day, &year);
+
+  int hours, minutes, seconds;
+
+  sscanf(__TIME__, "%d:%d:%d", &hours, &minutes, &seconds);
+
+  char dayBuf[10];
+
+  sscanf(__TIMESTAMP__, "%s", dayBuf);
+
+  static const char day_names[] = "MonTueWedThuFriSatSun";
+
+  month = (strstr(month_names, monthBuf) - month_names) / 3 + 1;
+  dayWeek = (strstr(day_names, dayBuf) - day_names) / 3 + 1;
+
+  RTC::WriteTime(seconds, minutes, hours, dayWeek, day, month, year);
+}
 
 void RTC::Init() {
   TWI::Init();
@@ -107,6 +120,8 @@ void RTC::Init() {
     UART::Print(errbuf);
     UART::PutChar('\n');
   }
+
+  //RTC::WriteTime(45, 47, 20, 7, 1, 7, 18);
 
   RTC::SetCompileTime();
 }
