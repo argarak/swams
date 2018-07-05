@@ -2,14 +2,18 @@
 #include "src/macros.h"
 #include "src/comm/uart/uart.h"
 #include "src/comm/rtc/rtc.h"
+#include "src/comm/ds18b20/temp.h"
 #include "util/delay.h"
 
 #include <stdio.h>
 
 int main(void) {
   UART::Init();
+
   RTC::Init();
   RTC::Start();
+
+  DS18B20::Init();
 
   DDRB |= _BV(DDB0);
 
@@ -33,12 +37,6 @@ int main(void) {
             timeBuf[6]);
 
     UART::Print(secbuf);
-
-    //char datebuf[64];
-
-    //sprintf(datebuf, "%s | %s\n", __DATE__, __TIME__);
-
-    //UART::Print(datebuf);
 
     _delay_ms(500);
 

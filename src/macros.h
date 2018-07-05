@@ -10,7 +10,7 @@
 #define PIN_T(p,b)                (PORT ## p ## b)
 #define DDR_T(p,b)                (DDR ## p)
 #define BITD_T(p,b)               (DD ## p ## b)
-#define IPIN(p,b)                 (PIN ## p)
+#define IPIN_T(p,b)               (PIN ## p)
 
 #define BIT(...) BIT_T(__VA_ARGS__)
 #define PORT(...) PORT_T(__VA_ARGS__)
