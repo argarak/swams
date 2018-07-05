@@ -16,9 +16,6 @@
 #endif
 
 namespace TWI {
-  static volatile uint8_t twiBuffer[TWI_BUFFER_LENGTH];
-  static volatile uint8_t twiBufferLength;
-
   extern volatile uint8_t writeAddress;
 
   void Init();

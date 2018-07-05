@@ -9,10 +9,10 @@ CXX=avr-g++
 CC=avr-gcc
 CFLAGS=-fdata-sections -ffunction-sections -mmcu=$(BOARD) -pedantic -DF_CPU=16000000UL -Os -mcall-prologues -g
 
-CXXSOURCES=$(shell find . -name "*.cpp")
-#CSOURCES=$(shell find . -name "*.c")
+CXXSOURCES=$(shell find . -name "*.cpp" -not -path "./tests/*")
+#CSOURCES=$(shell find . -name "*.c" -not -path "./tests/*")
 OBJECTS=$(SOURCES:.c=.o)
-HEADERS=$(shell find . -name "*.h")
+HEADERS=$(shell find . -name "*.h" -not -path "./tests/*")
 
 TARGET=swams
 
