@@ -62,7 +62,9 @@ uint16_t OneWire::ReadByte() {
   uint16_t data;
 
   for(uint8_t i = 0; i < 16; ++i) {
-    if(OneWire::Read()) data = (data & _BV(i));
+    if(OneWire::Read() == 1) {
+      data = (data | _BV(i));
+    }
   }
 
   return data;

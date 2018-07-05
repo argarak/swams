@@ -13,8 +13,6 @@ int main(void) {
   RTC::Init();
   RTC::Start();
 
-  DS18B20::Init();
-
   DDRB |= _BV(DDB0);
 
   while (1) {
@@ -26,17 +24,21 @@ int main(void) {
     for(int i = 0; i < 7; ++i)
       timeBuf[i] = RTC::ConvertFromBCD(timeBuf[i]);
 
-    char secbuf[64];
-    sprintf(secbuf, "Time: %i:%i:%02i | Date: %s %i/%i/%i\n",
-            timeBuf[2],
-            timeBuf[1],
-            timeBuf[0] - 80,
-            RTC::ConvertWeekDay(timeBuf[3] - 20),
-            timeBuf[4],
-            timeBuf[5],
-            timeBuf[6]);
+    // char secbuf[64];
+    // sprintf(secbuf, "Time: %i:%i:%02i | Date: %s %i/%i/%i\n",
+    //         timeBuf[2],
+    //         timeBuf[1],
+    //         timeBuf[0] - 80,
+    //         RTC::ConvertWeekDay(timeBuf[3] - 20),
+    //         timeBuf[4],
+    //         timeBuf[5],
+    //         timeBuf[6]);
 
-    UART::Print(secbuf);
+    // UART::Print(secbuf);
+
+    char buf[64];
+    sprintf(buf, "Temp: %d\n", DS18B20::ReadTemp());
+    UART::Print(buf);
 
     _delay_ms(500);
 

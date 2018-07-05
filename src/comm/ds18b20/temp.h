@@ -10,8 +10,7 @@
 #include "../onewire/onewire.h"
 
 namespace DS18B20 {
-  void Init();
-  //  uint8_t ReadTemp();
+  uint16_t ReadTemp();
 }
 
 #endif
