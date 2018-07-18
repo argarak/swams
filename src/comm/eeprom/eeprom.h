@@ -6,7 +6,7 @@
 #include <avr/eeprom.h>
 #include "../../macros.h"
 
-#define RTC_TIME_ADDRESS     0
+#define RTC_DATE_ADDRESS     0
 #define LIGHT_START_ADDRESS  1
 #define LIGHT_STOP_ADDRESS   2
 
