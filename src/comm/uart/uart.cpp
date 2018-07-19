@@ -34,7 +34,6 @@ bool UART::IsAvailable() {
   return true;
 }
 
-// TODO Optimise this function
 uint16_t UART::Strlen(const char* str) {
   uint16_t len;
   for(len = 0; str[len]; len++);
