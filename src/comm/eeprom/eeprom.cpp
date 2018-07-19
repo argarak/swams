@@ -28,10 +28,6 @@
 #define EE_TEMP_REG  15      /* Regulated temperature */
 #define EE_TEMP_TRH  16      /* Threshold */
 
-void EEPROM::Init() {
-  
-}
-
 void EEPROM::SaveDate(uint8_t seconds, uint8_t minutes, uint8_t hours,
                       uint8_t dayWeek, uint8_t day,
                       uint8_t month, uint8_t year) {
@@ -135,7 +131,7 @@ uint8_t EEPROM::RetrieveTempElement(uint8_t addr) {
   case REG_TEMP_ELEMENT:
     return eeprom_read_byte((uint8_t*)EE_TEMP_REG);
 
-  case THRESHOLD_TEMP_ELEMENT:
+  case THRESHOLD_ELEMENT:
     return eeprom_read_byte((uint8_t*)EE_TEMP_TRH);
 
   default:
