@@ -8,6 +8,7 @@
 #include "../../macros.h"
 #include "../twi/twi.h"
 #include "../uart/uart.h"
+#include "../eeprom/eeprom.h"
 
 #define RTC_ADDRESS       0x6F
 
@@ -17,8 +18,11 @@ namespace RTC {
   uint8_t ConvertFromBCD(uint8_t val);
   uint8_t ConvertToBCD(uint8_t val);
 
-  void WriteTime(uint8_t seconds, uint8_t minutes, uint8_t hours,
-                 uint8_t dayWeek, uint8_t day, uint8_t month, uint8_t year);
+  void WriteTime(int d[7]);
+  void GenerateArrayFromEEPROM(int d[7]);
+
+  void UpdateFromEEPROM();
+  bool CompareDates(uint8_t a[7], uint8_t b[7]);
   void SetCompileTime();
 
   void Start();

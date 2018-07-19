@@ -61,37 +61,71 @@ void RTC::ReadRegister(uint8_t address, uint8_t* buf) {
   TWI::Stop();
 }
 
-void RTC::WriteTime(uint8_t seconds, uint8_t minutes, uint8_t hours,
-                    uint8_t dayWeek, uint8_t day, uint8_t month, uint8_t year) {
+/* Array should be as follows:
+
+  [0]: seconds
+  [1]: minutes
+  [2]: hours
+  [3]: day of the week
+  [4]: day
+  [5]: month
+  [6]: year */
+void RTC::WriteTime(int d[7]) {
   TWI::writeAddress = 0x00;
   TWI::Start();
 
   TWI::Write((RTC_ADDRESS << 1)); // In SLA_W (write) mode
   TWI::Write(0x00);
 
-  TWI::Write(RTC::ConvertToBCD(seconds)); // seconds
-  TWI::Write(RTC::ConvertToBCD(minutes)); // minutes 
-  TWI::Write(RTC::ConvertToBCD(hours)); // hours
+  TWI::Write(RTC::ConvertToBCD(d[0])); // seconds
+  TWI::Write(RTC::ConvertToBCD(d[1])); // minutes 
+  TWI::Write(RTC::ConvertToBCD(d[2])); // hours
 
-  TWI::Write(RTC::ConvertToBCD(dayWeek)); // day of the week
-  TWI::Write(RTC::ConvertToBCD(day)); // day
-  TWI::Write(RTC::ConvertToBCD(month)); // month
-  TWI::Write(RTC::ConvertToBCD(year)); // year
+  TWI::Write(RTC::ConvertToBCD(d[3])); // day of the week
+  TWI::Write(RTC::ConvertToBCD(d[4])); // day
+  TWI::Write(RTC::ConvertToBCD(d[5])); // month
+  TWI::Write(RTC::ConvertToBCD(d[6])); // year
 
   TWI::Stop();
 }
 
+void RTC::GenerateArrayFromEEPROM(int d[7]) {
+  d[0] = EEPROM::RetrieveDateElement(RTC_DATE_ADDRESS, SECOND_ELEMENT);
+  d[1] = EEPROM::RetrieveDateElement(RTC_DATE_ADDRESS, MINUTE_ELEMENT);
+  d[2] = EEPROM::RetrieveDateElement(RTC_DATE_ADDRESS, HOUR_ELEMENT);
+  d[3] = EEPROM::RetrieveDateElement(RTC_DATE_ADDRESS, DAYWEEK_ELEMENT);
+  d[4] = EEPROM::RetrieveDateElement(RTC_DATE_ADDRESS, DAY_ELEMENT);
+  d[5] = EEPROM::RetrieveDateElement(RTC_DATE_ADDRESS, MONTH_ELEMENT);
+  d[6] = EEPROM::RetrieveDateElement(RTC_DATE_ADDRESS, YEAR_ELEMENT);
+}
+
+void RTC::UpdateFromEEPROM() {
+  
+}
+
+/* Returns true if first date is greater than second date */
+bool RTC::CompareDates(uint8_t a[7], uint8_t b[7]) {
+
+  /* Skipping index 3 as that's the week day element */
+
+  if(a[0] > b[0]) return true;
+  if(a[1] > b[1]) return true;
+  if(a[2] > b[2]) return true;
+  if(a[4] > b[4]) return true;
+  if(a[5] > b[5]) return true;
+  if(a[6] > b[6]) return true;
+  return false;
+}
+
 void RTC::SetCompileTime() {
+  int cd[7];
+
   char monthBuf[10];
-  int month, day, year, dayWeek;
 
   static const char month_names[] = "JanFebMarAprMayJunJulAugSepOctNovDec";
 
-  sscanf(__DATE__, "%s %d 20%d", monthBuf, &day, &year);
-
-  int hours, minutes, seconds;
-
-  sscanf(__TIME__, "%d:%d:%d", &hours, &minutes, &seconds);
+  sscanf(__DATE__, "%s %d 20%d", monthBuf, &cd[4], &cd[6]);
+  sscanf(__TIME__, "%d:%d:%d", &cd[2], &cd[1], &cd[0]);
 
   char dayBuf[10];
 
@@ -99,10 +133,13 @@ void RTC::SetCompileTime() {
 
   static const char day_names[] = "MonTueWedThuFriSatSun";
 
-  month = (strstr(month_names, monthBuf) - month_names) / 3 + 1;
-  dayWeek = (strstr(day_names, dayBuf) - day_names) / 3 + 1;
+  cd[5] = (strstr(month_names, monthBuf) - month_names) / 3 + 1;
+  cd[3] = (strstr(day_names, dayBuf) - day_names) / 3;
 
-  RTC::WriteTime(seconds, minutes, hours, dayWeek, day, month, year);
+  int ed[7];
+  RTC::GenerateArrayFromEEPROM(ed);
+
+  RTC::WriteTime(ed);
 }
 
 void RTC::Init() {
