@@ -24,8 +24,7 @@
 #define THRESHOLD_ELEMENT    3
 
 namespace EEPROM {
-  void SaveDate(uint8_t seconds, uint8_t minutes, uint8_t hours,
-                uint8_t dayWeek, uint8_t day, uint8_t month, uint8_t year);
+  void SaveDate(int d[7]);
 
   uint8_t RetrieveDateElement(uint8_t timeAddress, uint8_t elementAddress);
 

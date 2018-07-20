@@ -100,20 +100,22 @@ void RTC::GenerateArrayFromEEPROM(int d[7]) {
 }
 
 void RTC::UpdateFromEEPROM() {
-  
+  int ed[7];
+  RTC::GenerateArrayFromEEPROM(ed);
+  RTC::WriteTime(ed);
 }
 
 /* Returns true if first date is greater than second date */
-bool RTC::CompareDates(uint8_t a[7], uint8_t b[7]) {
+bool RTC::CompareDates(int a[7], int b[7]) {
 
   /* Skipping index 3 as that's the week day element */
 
-  if(a[0] > b[0]) return true;
-  if(a[1] > b[1]) return true;
-  if(a[2] > b[2]) return true;
-  if(a[4] > b[4]) return true;
-  if(a[5] > b[5]) return true;
   if(a[6] > b[6]) return true;
+  if(a[5] > b[5]) return true;
+  if(a[4] > b[4]) return true;
+  if(a[2] > b[2]) return true;
+  if(a[1] > b[1]) return true;
+  if(a[0] > b[0]) return true;
   return false;
 }
 
@@ -139,7 +141,12 @@ void RTC::SetCompileTime() {
   int ed[7];
   RTC::GenerateArrayFromEEPROM(ed);
 
-  RTC::WriteTime(ed);
+  if(RTC::CompareDates(ed, cd)) {
+    RTC::UpdateFromEEPROM();
+  } else {
+    EEPROM::SaveDate(cd);
+    RTC::UpdateFromEEPROM();
+  }
 }
 
 void RTC::Init() {
@@ -162,4 +169,3 @@ void RTC::Init() {
 
   RTC::SetCompileTime();
 }
-

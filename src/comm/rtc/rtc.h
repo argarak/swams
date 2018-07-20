@@ -22,7 +22,7 @@ namespace RTC {
   void GenerateArrayFromEEPROM(int d[7]);
 
   void UpdateFromEEPROM();
-  bool CompareDates(uint8_t a[7], uint8_t b[7]);
+  bool CompareDates(int a[7], int b[7]);
   void SetCompileTime();
 
   void Start();

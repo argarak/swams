@@ -38,7 +38,6 @@ int main(void) {
   //   _delay_us(500);
   // }
 
-  // EEPROM::SaveDate(50, 6, 12, 0, 11, 2, 15);
   // EEPROM::SetTemps(50, 12, 25, 2);
   // EEPROM::SaveTime(LIGHT_START_ADDRESS, 12, 12, 12);
   // EEPROM::SaveTime(LIGHT_STOP_ADDRESS, 10, 10, 10);

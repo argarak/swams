@@ -28,18 +28,16 @@
 #define EE_TEMP_REG  15      /* Regulated temperature */
 #define EE_TEMP_TRH  16      /* Threshold */
 
-void EEPROM::SaveDate(uint8_t seconds, uint8_t minutes, uint8_t hours,
-                      uint8_t dayWeek, uint8_t day,
-                      uint8_t month, uint8_t year) {
+void EEPROM::SaveDate(int d[7]) {
 
   /*             |  Pointer to Address    | Value     | */
-  eeprom_write_byte((uint8_t*)EE_RTC_SEC,  seconds);
-  eeprom_write_byte((uint8_t*)EE_RTC_MIN,  minutes);
-  eeprom_write_byte((uint8_t*)EE_RTC_HR,   hours);
-  eeprom_write_byte((uint8_t*)EE_RTC_WKD,  dayWeek);
-  eeprom_write_byte((uint8_t*)EE_RTC_DAY,  day);
-  eeprom_write_byte((uint8_t*)EE_RTC_MTH,  month);
-  eeprom_write_byte((uint8_t*)EE_RTC_YR,   year);
+  eeprom_write_byte((uint8_t*)EE_RTC_SEC,  d[0]);
+  eeprom_write_byte((uint8_t*)EE_RTC_MIN,  d[1]);
+  eeprom_write_byte((uint8_t*)EE_RTC_HR,   d[2]);
+  eeprom_write_byte((uint8_t*)EE_RTC_WKD,  d[3]);
+  eeprom_write_byte((uint8_t*)EE_RTC_DAY,  d[4]);
+  eeprom_write_byte((uint8_t*)EE_RTC_MTH,  d[5]);
+  eeprom_write_byte((uint8_t*)EE_RTC_YR,   d[6]);
 }
 
 uint8_t EEPROM::RetrieveDateElement(uint8_t timeAddress,
