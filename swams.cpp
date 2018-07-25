@@ -1,4 +1,6 @@
 
+
+
 #include "src/macros.h"
 #include "src/comm/uart/uart.h"
 #include "src/comm/rtc/rtc.h"
@@ -115,10 +117,10 @@ int main(void) {
   //   _delay_ms(500);
   // }
 
-  // while (1) {
-  //   char adcbuf[64];
-  //   sprintf(adcbuf, "ADC: %i\n", ATDC::ReadValue());
-  //   UART::Print(adcbuf);
-  //   _delay_ms(200);
-  // }
+  while (1) {
+    char adcbuf[64];
+    sprintf(adcbuf, "ADC: %i\n", ATDC::ReadValue());
+    UART::Print(adcbuf);
+    _delay_ms(1000);
+  }
 }
