@@ -3,6 +3,7 @@
 
 #include <avr/io.h>
 
+#include "../comm/buzzer/buzzer.h"
 #include "../comm/uart/uart.h"
 #include "../comm/eeprom/eeprom.h"
 #include "../comm/pwm/pwm.h"

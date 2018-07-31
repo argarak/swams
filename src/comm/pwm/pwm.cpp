@@ -4,6 +4,7 @@
 #define PWM_PIN B,2
 
 void PWM::Init(uint16_t dc) {
+  /* Set PWM for LED Strip */
   io_output_mode(DDR(PWM_PIN), BITD(PWM_PIN));
 
   ICR1 = 0xFFFF;

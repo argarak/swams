@@ -24,7 +24,9 @@ int main(void) {
   ATDC::Init();
 
   EEPROM::SetTemps(40, 20, 38, 32);
-  
+
+  Buzzer::Init();
+
   DDRD |= _BV(DDD7);
   PORTD |= _BV(PD7);
 
@@ -33,6 +35,8 @@ int main(void) {
   _delay_ms(500);
 
   io_set_low(PORT(D,7), BIT(D,7));
+
+  Buzzer::Beep(BUZZ_TEST_OK);
 
   while(1) {
     uint8_t timeBuf[7];

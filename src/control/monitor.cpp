@@ -9,10 +9,14 @@ void Monitor::Update() {
 
   if((DS18B20::ReadTemp() - threshold) > (regTemp * 10)) {
     io_set_high(PORT(D,7), BIT(D,7));
+
+    Buzzer::Beep(BUZZ_TEMP_HIGH);
   }
 
   if((DS18B20::ReadTemp() + threshold) < (regTemp * 10)) {
     io_set_low(PORT(D,7), BIT(D,7));
+
+    Buzzer::Beep(BUZZ_TEMP_LOW);
   }
 
   /* Check if LEDs should switch on */
