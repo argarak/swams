@@ -1,6 +1,4 @@
 
-
-
 #include "src/macros.h"
 #include "src/comm/uart/uart.h"
 #include "src/comm/rtc/rtc.h"
@@ -12,8 +10,10 @@
 #include "util/delay.h"
 
 #include "src/control/command.h"
+#include "src/control/monitor.h"
 
 #include <stdio.h>
+#include <avr/interrupt.h>
 
 int main(void) {
   UART::Init();
@@ -23,12 +23,51 @@ int main(void) {
 
   ATDC::Init();
 
-  // while(1) {
-  //   Command::Listen();
-  // }
+  EEPROM::SetTemps(40, 20, 38, 32);
+  
+  DDRD |= _BV(DDD7);
+  PORTD |= _BV(PD7);
 
-  //DDRB |= _BV(DDB2);
-  //PORTB |= _BV(PB2);
+  io_set_high(PORT(D,7), BIT(D,7));
+
+  _delay_ms(500);
+
+  io_set_low(PORT(D,7), BIT(D,7));
+
+  while(1) {
+    uint8_t timeBuf[7];
+    RTC::ReadRegister(0x00, timeBuf);
+
+    for(int i = 0; i < 7; ++i) {
+      timeBuf[i] = RTC::ConvertFromBCD(timeBuf[i]);
+    }
+
+    char buf[64];
+    sprintf(buf, "Time: %i:%i:%02i | Date: %s %i/%i/%i\n",
+            timeBuf[2],
+            timeBuf[1],
+            timeBuf[0] - 80,
+            RTC::ConvertWeekDay(timeBuf[3] - 20),
+            timeBuf[4],
+            timeBuf[5],
+            timeBuf[6]);
+
+    UART::Print(buf);
+
+    sprintf(buf, "Temp: %d\n", DS18B20::ReadTemp());
+    UART::Print(buf);
+
+    sprintf(buf, "ADC: %i\n", ATDC::ReadValue());
+    UART::Print(buf);
+
+    _delay_ms(1000);
+
+    /* TODO: check for method to enable temp/led function without
+       pinging uart */
+    Command::Listen();
+
+    Monitor::Update();
+  }
 
   // PWM::Init(0);
 
@@ -85,42 +124,4 @@ int main(void) {
 
   //   _delay_ms(10000);
   // }
-
-  // while(1) {
-  //   PORTB |= _BV(PB0);
-
-  //   uint8_t timeBuf[7];
-  //   RTC::ReadRegister(0x00, timeBuf);
-
-  //   for(int i = 0; i < 7; ++i)
-  //     timeBuf[i] = RTC::ConvertFromBCD(timeBuf[i]);
-
-  //   char secbuf[64];
-  //   sprintf(secbuf, "Time: %i:%i:%02i | Date: %s %i/%i/%i\n",
-  //           timeBuf[2],
-  //           timeBuf[1],
-  //           timeBuf[0] - 80,
-  //           RTC::ConvertWeekDay(timeBuf[3] - 20),
-  //           timeBuf[4],
-  //           timeBuf[5],
-  //           timeBuf[6]);
-
-  //   UART::Print(secbuf);
-
-  //   // char buf[64];
-  //   // sprintf(buf, "Temp: %d\n", DS18B20::ReadTemp());
-  //   // UART::Print(buf);
-
-  //   _delay_ms(500);
-
-  //   PORTB &= ~_BV(PB0);
-  //   _delay_ms(500);
-  // }
-
-  while (1) {
-    char adcbuf[64];
-    sprintf(adcbuf, "ADC: %i\n", ATDC::ReadValue());
-    UART::Print(adcbuf);
-    _delay_ms(1000);
-  }
 }

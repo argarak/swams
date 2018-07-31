@@ -130,7 +130,7 @@ uint8_t Command::Lookup(uint8_t id, char* msg) {
 }
 
 int Command::Listen() {
-  char* tmsg = UART::ReadString();
+  char* tmsg = UART::ReadString(500);
 
   char msg[256];
 

@@ -61,6 +61,15 @@ uint8_t UART::GetChar() {
   return UDR0;
 }
 
+uint8_t UART::GetChar(uint16_t waitTime) {
+  do {
+    if (UCSR0A & (1 << RXC0)) return UDR0;
+    _delay_ms(1);
+  } while(--waitTime);
+
+  return 0;
+}
+
 char* UART::ReadString() {
   char* buf = (char*)malloc(255);
 
@@ -72,6 +81,35 @@ char* UART::ReadString() {
   do {
     do {
       b = UART::GetChar();
+      break;
+
+    } while(1);
+
+    buf[i] = b;
+    i++;
+
+  } while(b != '\n' && b != '\r' && b != '\0');
+
+  buf[i] = '\0';
+
+  // remember to free()!
+  return buf;
+}
+
+char* UART::ReadString(uint16_t waitTime) {
+  char* buf = (char*)malloc(255);
+
+  buf[0] = '\0';
+
+  uint8_t i = 0;
+  char b = '\0';
+
+  do {
+    do {
+      b = UART::GetChar(waitTime);
+
+      if(b == 0) return buf;
+
       break;
 
     } while(1);

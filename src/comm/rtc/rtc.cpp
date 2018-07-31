@@ -138,15 +138,19 @@ void RTC::SetCompileTime() {
   cd[5] = (strstr(month_names, monthBuf) - month_names) / 3 + 1;
   cd[3] = (strstr(day_names, dayBuf) - day_names) / 3;
 
-  int ed[7];
-  RTC::GenerateArrayFromEEPROM(ed);
+  /* Initially this code checked to see if the EEPROM date was more recent,
+     but this does not work for some reason and is currently very low
+     priority, so it won't be fixed right now... */
 
-  if(RTC::CompareDates(ed, cd)) {
-    RTC::UpdateFromEEPROM();
-  } else {
+  // int ed[7];
+  // RTC::GenerateArrayFromEEPROM(ed);
+
+  // if(RTC::CompareDates(ed, cd)) {
+    // RTC::UpdateFromEEPROM();
+  // } else {
     EEPROM::SaveDate(cd);
     RTC::UpdateFromEEPROM();
-  }
+  // }
 }
 
 void RTC::Init() {
